@@ -1,0 +1,143 @@
+﻿@model IEnumerable<APITecsup.Models.Producto>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PrecioVenta)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaCreacion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EstaActivo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaVencimiento)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IGV)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioVenta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaCreacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstaActivo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaVencimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IGV)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ProductoID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ProductoID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ProductoID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+<div>
+    <h3>
+        Busqueda por ID de Productos
+        <input class="form-control" value="" id="Nombre=" Nombre="text" />
+</div>
+<br />
+<br />
+<table id="tablaProducto" class="table">
+    <thead>
+        <tr>
+            <th>
+                Producto ID
+            </th>
+            <th>
+                Nombre
+            </th>
+           
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#ProductoID').keyup(function () {
+
+                var ProductoID = $('#ProductoID').val();
+
+                if (ProductoID === '') {
+                    return $('#tablaProducto tbody tr').remove();
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetProducto")',
+                    dataType: 'json',
+                    data: { ProductoID: ProductoID },
+                    success: function (data) {
+                        $('#tablaProducto tbody tr').remove();
+                        $.each(data, function (i, item) {
+                            var rows = "<tr>"
+                        + "<td class='prtoducttd'>" + item.ProductoID + "</td>"
+                        + "<td class='prtoducttd'>" + item.Nombre + "</td>"
+                     
+                            "</tr>"
+                            $('#tablaProductos body').append(rows);
+                        });
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        console.log('Message: ' + r.Message);
+                        console.log('StackTrace: ' + r.StackTrace);
+                        console.log('ExceptionType: ' + r.ExceptionType);
+                    }
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+}
